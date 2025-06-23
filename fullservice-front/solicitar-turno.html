@@ -1,0 +1,168 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solicitar Turno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f9f9f9;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #555;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select[multiple] {
+      height: auto;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-secundario {
+      background-color: #6c757d;
+    }
+
+    .btn-secundario:hover {
+      background-color: #5a6268;
+    }
+
+    #mensaje {
+      margin-top: 15px;
+      text-align: center;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Solicitar Turno</h2>
+  <form id="form-turno">
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha" required />
+
+    <label for="hora">Hora:</label>
+    <input type="time" id="hora" required />
+
+    <label for="servicios">Servicio(s) a realizar:</label>
+    <select id="servicios" multiple required>
+      <option value="Lavado especial">Lavado especial</option>
+      <option value="Lavado del motor">Lavado del motor</option>
+      <option value="Lavado de tapicería">Lavado de tapicería</option>
+      <option value="Cambio de aceite">Cambio de aceite</option>
+      <option value="Frenos">Frenos</option>
+      <option value="Chequeo general">Chequeo general</option>
+    </select>
+
+    <label for="motivo">¿Te gustaría comentarnos algo más?</label>
+    <textarea id="motivo" rows="4"></textarea>
+
+    <button type="submit">Enviar Turno</button>
+    <p id="mensaje"></p>
+  </form>
+
+  <!-- Botón de volver al inicio -->
+  <button class="btn-secundario" onclick="volverAlInicio()">🔙 Volver al inicio</button>
+</div>
+
+<script>
+  const form = document.getElementById('form-turno');
+  const mensaje = document.getElementById('mensaje');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fecha = document.getElementById('fecha').value;
+    const hora = document.getElementById('hora').value;
+    const motivo = document.getElementById('motivo').value;
+
+    const serviciosSelect = document.getElementById('servicios');
+    const servicios = Array.from(serviciosSelect.selectedOptions).map(option => option.value);
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      mensaje.style.color = 'red';
+      mensaje.innerText = 'Debes iniciar sesión primero.';
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:3000/turnos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ fecha, hora, motivo, servicios })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        mensaje.style.color = 'green';
+        mensaje.innerText = '✅ Turno registrado con éxito.';
+        form.reset();
+      } else {
+        mensaje.style.color = 'red';
+        mensaje.innerText = data.mensaje || 'Error al registrar el turno.';
+      }
+    } catch (error) {
+      console.error('Error al enviar el turno:', error);
+      mensaje.style.color = 'red';
+      mensaje.innerText = 'Error de conexión con el servidor.';
+    }
+  });
+
+  function volverAlInicio() {
+    window.location.href = "inicio.html";
+  }
+</script>
+
+</body>
+</html>
+

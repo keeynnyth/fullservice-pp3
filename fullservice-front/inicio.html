@@ -1,0 +1,63 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel del Usuario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f2f2f2;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Bienvenido/a</h2>
+
+  <button onclick="location.href='solicitar-turno.html'">Solicitar turno</button>
+  <button onclick="location.href='historial-turnos.html'">Ver historial de turnos</button>
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<script>
+  function cerrarSesion() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("nombre");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iniciar Sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f2f2f2;
+    }
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; color: #333; }
+    label { display: block; margin-top: 15px; color: #555; }
+    input {
+      width: 100%; padding: 10px; margin-top: 5px;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+    button {
+      width: 100%; padding: 10px; margin-top: 20px;
+      background-color: #007BFF; color: white;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    button:hover { background-color: #0056b3; }
+    #mensaje { margin-top: 15px; text-align: center; color: red; }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Iniciar Sesión</h2>
+  <form id="form-login">
+    <label>Email</label>
+    <input type="email" id="email" required />
+    <label>Contraseña</label>
+    <input type="password" id="password" required />
+    <button type="submit">Ingresar</button>
+    <p id="mensaje"></p>
+  </form>
+</div>
+
+<script>
+  document.getElementById("form-login").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      console.log("🔍 Data recibida del backend:", data);
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("nombre", data.nombre); // <-- AQUÍ ESTABA FALTANDO
+
+        window.location.href = "inicio.html";
+      } else {
+        document.getElementById("mensaje").innerText = data.mensaje;
+      }
+    } catch (err) {
+      document.getElementById("mensaje").innerText = "Error en la solicitud";
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
