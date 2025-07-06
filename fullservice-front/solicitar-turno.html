@@ -15,7 +15,7 @@
     }
 
     .form-container {
-      max-width: 400px;
+      max-width: 500px;
       margin: auto;
       background: #fff;
       padding: 30px;
@@ -42,8 +42,11 @@
       border-radius: 5px;
     }
 
-    select[multiple] {
-      height: auto;
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 10px;
     }
 
     button {
@@ -64,6 +67,7 @@
 
     .btn-secundario {
       background-color: #6c757d;
+      margin-top: 10px;
     }
 
     .btn-secundario:hover {
@@ -75,6 +79,10 @@
       text-align: center;
       color: green;
     }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -82,21 +90,74 @@
 <div class="form-container">
   <h2>Solicitar Turno</h2>
   <form id="form-turno">
+
     <label for="fecha">Fecha:</label>
     <input type="date" id="fecha" required />
 
     <label for="hora">Hora:</label>
     <input type="time" id="hora" required />
 
-    <label for="servicios">Servicio(s) a realizar:</label>
-    <select id="servicios" multiple required>
-      <option value="Lavado especial">Lavado especial</option>
-      <option value="Lavado del motor">Lavado del motor</option>
-      <option value="Lavado de tapicería">Lavado de tapicería</option>
-      <option value="Cambio de aceite">Cambio de aceite</option>
-      <option value="Frenos">Frenos</option>
-      <option value="Chequeo general">Chequeo general</option>
+    <label>Servicio(s) a realizar:</label>
+    <div class="checkbox-group" id="servicios">
+      <label><input type="checkbox" value="Lavado especial" /> Lavado especial</label>
+      <label><input type="checkbox" value="Lavado del motor" /> Lavado del motor</label>
+      <label><input type="checkbox" value="Lavado de tapicería" /> Lavado de tapicería</label>
+      <label><input type="checkbox" value="Cambio de aceite" /> Cambio de aceite</label>
+      <label><input type="checkbox" value="Frenos" /> Frenos</label>
+      <label><input type="checkbox" value="Chequeo general" /> Chequeo general</label>
+    </div>
+
+    <label for="marca">Marca del vehículo:</label>
+    <select id="marca" required>
+      <option value="">Selecciona una marca</option>
+      <option value="Volkswagen">Volkswagen</option>
+      <option value="Renault">Renault</option>
+      <option value="Ford">Ford</option>
+      <option value="Chevrolet">Chevrolet</option>
+      <option value="Peugeot">Peugeot</option>
+      <option value="Fiat">Fiat</option>
+      <option value="Toyota">Toyota</option>
+      <option value="Honda">Honda</option>
+      <option value="Citroën">Citroën</option>
+      <option value="Nissan">Nissan</option>
     </select>
+
+    <label for="modelo">Modelo:</label>
+    <input type="text" id="modelo" placeholder="Ej: Gol, Clio, Ka, etc." required />
+
+    <label for="anio">Año:</label>
+    <input type="number" id="anio" min="1980" max="2025" required />
+
+    <label for="taller">Tipo de taller:</label>
+    <select id="taller" required onchange="mostrarOpcionesTaller()">
+      <option value="">Selecciona una opción</option>
+      <option value="FullService">Taller FullService</option>
+      <option value="Asociado">Taller Asociado</option>
+      <option value="Externo">Taller Externo</option>
+    </select>
+
+    <div id="taller-asociado-opciones" class="hidden">
+      <label for="tallerSeleccionado">Selecciona un taller asociado:</label>
+      <select id="tallerSeleccionado">
+        <option value="">Selecciona uno</option>
+        <option value="Taller Martín">Taller Martín</option>
+        <option value="Taller Speed">Taller Speed</option>
+        <option value="Taller AutosPro">Taller AutosPro</option>
+        <option value="Taller Rápido">Taller Rápido</option>
+        <option value="Taller del Sur">Taller del Sur</option>
+      </select>
+    </div>
+
+    <div id="taller-externo-opciones" class="hidden">
+      <label for="tallerNombre">Nombre del taller:</label>
+      <input type="text" id="tallerNombre" />
+
+      <label for="tallerDireccion">Dirección:</label>
+      <input type="text" id="tallerDireccion" />
+
+      <label for="tallerTelefono">Teléfono:</label>
+      <input type="text" id="tallerTelefono" />
+    </div>
 
     <label for="motivo">¿Te gustaría comentarnos algo más?</label>
     <textarea id="motivo" rows="4"></textarea>
@@ -105,64 +166,98 @@
     <p id="mensaje"></p>
   </form>
 
-  <!-- Botón de volver al inicio -->
-  <button class="btn-secundario" onclick="volverAlInicio()">🔙 Volver al inicio</button>
+  <button class="btn-secundario" onclick="window.location.href='inicio.html'">🔙 Volver al inicio</button>
 </div>
 
-<script>
-  const form = document.getElementById('form-turno');
-  const mensaje = document.getElementById('mensaje');
+<!-- 🔧 Corrección aplicada: servicios.join(', ') en el fetch -->
 
-  form.addEventListener('submit', async (e) => {
+<script>
+  function mostrarOpcionesTaller() {
+    const tipo = document.getElementById("taller").value;
+    document.getElementById("taller-asociado-opciones").classList.add("hidden");
+    document.getElementById("taller-externo-opciones").classList.add("hidden");
+
+    if (tipo === "Asociado") {
+      document.getElementById("taller-asociado-opciones").classList.remove("hidden");
+    } else if (tipo === "Externo") {
+      document.getElementById("taller-externo-opciones").classList.remove("hidden");
+    }
+  }
+
+  const form = document.getElementById("form-turno");
+  const mensaje = document.getElementById("mensaje");
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const fecha = document.getElementById('fecha').value;
-    const hora = document.getElementById('hora').value;
-    const motivo = document.getElementById('motivo').value;
+    const fecha = document.getElementById("fecha").value;
+    const hora = document.getElementById("hora").value;
+    const motivo = document.getElementById("motivo").value;
+    const marca = document.getElementById("marca").value;
+    const modelo = document.getElementById("modelo").value;
+    const anio = document.getElementById("anio").value;
+    const tipoTaller = document.getElementById("taller").value;
+    const tallerSeleccionado = document.getElementById("tallerSeleccionado").value;
+    const tallerNombre = document.getElementById("tallerNombre").value;
+    const tallerDireccion = document.getElementById("tallerDireccion").value;
+    const tallerTelefono = document.getElementById("tallerTelefono").value;
 
-    const serviciosSelect = document.getElementById('servicios');
-    const servicios = Array.from(serviciosSelect.selectedOptions).map(option => option.value);
+    const serviciosCheckboxes = document.querySelectorAll("#servicios input[type='checkbox']");
+    const servicios = Array.from(serviciosCheckboxes)
+      .filter(c => c.checked)
+      .map(c => c.value)
+      .join(', '); // ✅ CORREGIDO
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      mensaje.style.color = 'red';
-      mensaje.innerText = 'Debes iniciar sesión primero.';
+      mensaje.style.color = "red";
+      mensaje.innerText = "Debes iniciar sesión primero.";
       return;
     }
 
     try {
-      const res = await fetch('http://localhost:3000/turnos', {
-        method: 'POST',
+      const res = await fetch("http://localhost:3000/turnos", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
         },
-        body: JSON.stringify({ fecha, hora, motivo, servicios })
+        body: JSON.stringify({
+          fecha,
+          hora,
+          motivo,
+          servicios, // ← Ya es un string correcto
+          marca,
+          modelo,
+          anio,
+          taller: tipoTaller,
+          taller_seleccionado: tallerSeleccionado,
+          taller_externo_nombre: tallerNombre,
+          taller_externo_direccion: tallerDireccion,
+          taller_externo_telefono: tallerTelefono
+        })
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        mensaje.style.color = 'green';
-        mensaje.innerText = '✅ Turno registrado con éxito.';
+        mensaje.style.color = "green";
+        mensaje.innerText = "✅ Turno registrado con éxito.";
         form.reset();
+        mostrarOpcionesTaller(); // Resetea opciones de taller
       } else {
-        mensaje.style.color = 'red';
-        mensaje.innerText = data.mensaje || 'Error al registrar el turno.';
+        mensaje.style.color = "red";
+        mensaje.innerText = data.mensaje || "Error al registrar el turno.";
       }
     } catch (error) {
-      console.error('Error al enviar el turno:', error);
-      mensaje.style.color = 'red';
-      mensaje.innerText = 'Error de conexión con el servidor.';
+      console.error("Error al enviar el turno:", error);
+      mensaje.style.color = "red";
+      mensaje.innerText = "Error de conexión con el servidor.";
     }
   });
-
-  function volverAlInicio() {
-    window.location.href = "inicio.html";
-  }
 </script>
+
 
 </body>
 </html>
-

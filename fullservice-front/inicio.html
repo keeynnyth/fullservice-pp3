@@ -4,60 +4,81 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel del Usuario</title>
+  <title>Inicio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       margin: 0;
-      background: #f2f2f2;
+      background: #f9f9f9;
     }
+
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
-      background: white;
+      background: #fff;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       text-align: center;
+    }
+
+    h1 {
       color: #333;
     }
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 16px;
+
+    .btn {
+      display: inline-block;
+      margin: 15px 10px;
+      padding: 12px 20px;
       background-color: #007BFF;
       color: white;
-      border: none;
+      text-decoration: none;
       border-radius: 5px;
-      cursor: pointer;
     }
-    button:hover {
+
+    .btn:hover {
       background-color: #0056b3;
+    }
+
+    #cerrarSesion {
+      background-color: #dc3545;
+    }
+
+    #cerrarSesion:hover {
+      background-color: #a71d2a;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Bienvenido/a</h2>
+  <div class="container">
+    <h1 id="saludo">Bienvenido/a</h1>
 
-  <button onclick="location.href='solicitar-turno.html'">Solicitar turno</button>
-  <button onclick="location.href='historial-turnos.html'">Ver historial de turnos</button>
-  <button onclick="cerrarSesion()">Cerrar sesión</button>
-</div>
+    <a href="solicitar-turno.html" class="btn">Solicitar turno</a>
+    <a href="historial-turnos.html" class="btn">Ver historial</a>
+    <button id="cerrarSesion" class="btn">Cerrar sesión</button>
+  </div>
 
-<script>
-  function cerrarSesion() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("nombre");
-    window.location.href = "login.html";
+  <script>
+    const nombre = localStorage.getItem('nombre');
+    const saludo = document.getElementById('saludo');
+    saludo.textContent = nombre ? `Bienvenido/a, ${nombre}` : "Bienvenido/a";
+
+    document.getElementById('cerrarSesion').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    });
+  </script>
+
+  <script>
+  // Verificar si el usuario está autenticado
+  if (!localStorage.getItem('nombre')) {
+    alert('Por favor, inicia sesión primero.');
+    window.location.href = 'index.html';
   }
-</script>
+    </script>
 
 </body>
 </html>

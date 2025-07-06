@@ -920,6 +920,12 @@
             #programacion{
                 margin-bottom: 20px;
             }
+
+              #nav-links li a{
+        color:var(--gris-claro);
+        padding: 7px;
+        margin: auto;
+        font-size: 1.2rem;      
            
-           }
+           }}
     

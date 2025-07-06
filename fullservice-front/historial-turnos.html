@@ -13,7 +13,7 @@
       background-color: #f4f4f4;
     }
     .container {
-      max-width: 600px;
+      max-width: 800px;
       margin: auto;
       background: white;
       padding: 30px;
@@ -24,28 +24,26 @@
       text-align: center;
       color: #333;
     }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
+    .turno {
       background: #e9ecef;
       margin-bottom: 15px;
       padding: 15px;
       border-radius: 5px;
     }
-    .back-btn {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
+    .turno p {
+      margin: 5px 0;
+    }
+    .btn-secundario {
       background-color: #6c757d;
       color: white;
       border: none;
       border-radius: 5px;
+      padding: 10px 20px;
       cursor: pointer;
+      display: block;
+      margin: 20px auto 0;
     }
-    .back-btn:hover {
+    .btn-secundario:hover {
       background-color: #5a6268;
     }
   </style>
@@ -54,8 +52,9 @@
 
 <div class="container">
   <h2>Historial de Turnos</h2>
-  <ul id="lista-turnos"></ul>
-  <button class="back-btn" onclick="window.location.href='inicio.html'">Volver al panel</button>
+  <div id="lista-turnos"></div>
+
+  <button class="btn-secundario" onclick="window.location.href='inicio.html'">🔙 Volver al inicio</button>
 </div>
 
 <script>
@@ -74,18 +73,32 @@
   })
     .then(res => res.json())
     .then(data => {
-      const lista = document.getElementById("lista-turnos");
+      const contenedor = document.getElementById("lista-turnos");
+
       if (Array.isArray(data) && data.length > 0) {
         data.forEach(turno => {
-          const li = document.createElement("li");
-          li.innerHTML = `<strong>Fecha:</strong> ${turno.fecha}<br>
-                          <strong>Hora:</strong> ${turno.hora}<br>
-                          <strong>Servicios:</strong> ${turno.servicios}<br>
-                          <strong>Comentario:</strong> ${turno.motivo || 'Sin comentarios'}`;
-          lista.appendChild(li);
+          const div = document.createElement("div");
+          div.className = "turno";
+
+          div.innerHTML = `
+            <p><strong>Fecha:</strong> ${turno.fecha}</p>
+            <p><strong>Hora:</strong> ${turno.hora}</p>
+            <p><strong>Servicios:</strong> ${turno.servicios}</p>
+            <p><strong>Marca:</strong> ${turno.marca || '-'}</p>
+            <p><strong>Modelo:</strong> ${turno.modelo || '-'}</p>
+            <p><strong>Año:</strong> ${turno.anio || '-'}</p>
+            <p><strong>Tipo de Taller:</strong> ${turno.taller || '-'}</p>
+            <p><strong>Taller Seleccionado:</strong> ${turno.taller_seleccionado || '-'}</p>
+            <p><strong>Nombre Taller Externo:</strong> ${turno.taller_externo_nombre || '-'}</p>
+            <p><strong>Dirección Taller Externo:</strong> ${turno.taller_externo_direccion || '-'}</p>
+            <p><strong>Teléfono Taller Externo:</strong> ${turno.taller_externo_telefono || '-'}</p>
+            <p><strong>Comentario:</strong> ${turno.motivo || 'Sin comentarios'}</p>
+          `;
+
+          contenedor.appendChild(div);
         });
       } else {
-        lista.innerHTML = "<li>No hay turnos registrados.</li>";
+        contenedor.innerHTML = "<p>No hay turnos registrados.</p>";
       }
     })
     .catch(err => {

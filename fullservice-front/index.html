@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,23 +15,22 @@
             <img src="./imagenes/fullservice.png" alt="Logo de Fullservice">
         </div>
         <nav>
-            <ul id="nav-links">
-                <li><a href="nosotros.html">Nosotros</a></li>
-                <li><a href="vision.html">Visión</a></li>
-                <li><a href="mision.html">Misión</a></li>
-                <li><div id="navbar-buttons">
-    <button id="btn-register">Registrarse</button>
-  <button id="btn-login">Iniciar sesión</button>
-  <button id="btn-admin" style="display: none;">Panel Admin</button>
-  <button id="btn-logout" style="display: none;">Cerrar sesión</button>
-</div>
-</li>
-            </ul>
-   
+  <ul id="nav-links">
+    <li><a href="nosotros.html">Nosotros</a></li>
+    <li><a href="vision.html">Visión</a></li>
+    <li><a href="mision.html">Misión</a></li>
+    <li>
+      <div id="navbar-buttons">
+        <button id="btn-register">Registrarse</button>
+        <button id="btn-login">Iniciar sesión</button>
+        <button id="btn-admin" style="display: none;">Panel Admin</button>
+        <button id="btn-logout" style="display: none;">Cerrar sesión</button>
+      </div>
+    </li>
+  </ul>
+  <div class="menu-icon" id="menu-icon">&#9776;</div>
+</nav>
 
-
-            <div class="menu-icon" id="menu-icon">&#9776;</div>
-        </nav>
     </header>
     <div class="container">
         <p>Tu auto en buenas manos, tu tiempo en mejores...</p>
@@ -171,7 +172,8 @@
                 <p><span>Precio: $13000</span></p>
             </div>
         </section>
-<!--
+
+        <!-- 
         <section id="registro">
             <h2>Registro</h2>
             <button id="mostrarFormulario">Registrarse</button>
@@ -201,7 +203,6 @@
             </form>
             <p id="mensaje"></p>
         </section>
-        -->
 
         <section id="programacion">
             <h2>Programación de Turnos</h2>
@@ -280,10 +281,12 @@
             <button id="confirmarTurno">Agendar Turno y Enviar por WhatsApp</button>
         </section>
 
+        -->
         <!-- contacto.html -->
 <section id="contacto">
   <h2>¿Deseás realizar alguna consulta? <i>¡Contactanos!</i></h2>
-  <form id="form-contacto">
+  <form id="form-contacto"   action="https://formspree.io/f/xzzgqkvq"
+  method="POST">
     <label for="nombreContacto">Nombre:</label>
     <input type="text" id="nombreContacto" name="nombre" required />
 
@@ -298,11 +301,11 @@
   <p id="respuesta"></p>
 </section>
         <section id="redes">
-            <h2>Redes Sociales</h2>
+            <h2>Visitanos tambien en nuestras Redes Sociales</h2>
             <div class="redes-container">
                 <a href="https://www.facebook.com/FullService" target="_blank"><img src="./imagenes/facebook.png" alt="Facebook"></a>
-                <a href="https://www.instagram.com/FullService" target="_blank"><img src="./imagenes/instagram.png" alt="Instagram"></a>
-                <a href="https://www.twitter.com/FullService" target="_blank"><img src="./imagenes/twitter.png" alt="Twitter"></a>
+                <a href="https://www.instagram.com/FullService" target="_blank"><img src="./imagenes/logotipo-de-instagram.png" alt="Instagram"></a>
+                <a href="https://www.twitter.com/FullService" target="_blank"><img src="./imagenes/gorjeo.png" alt="Twitter"></a>
             </div>
         </section>
     </main>
@@ -313,9 +316,7 @@
 
     <button id="contactoWhatsApp" onclick="irAWhatsApp()"> <img src="./imagenes/3.png" alt="boton WhatsApp"></button>
 
-    <script src="./assets/js/scripts.js"></script>
-    <script src="./assets/js/contacto.js"></script>
-
+  
     
 
 
@@ -352,6 +353,7 @@
       </script>
      -->
 
+  <!-- 
     <script>
   document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
@@ -447,6 +449,36 @@
   });
 </script>
 
+<script>
+  function irAWhatsApp() {
+    const telefono = '5491126079467'; // Reemplaza con el número de teléfono real
+    const mensaje = 'Hola, me gustaría obtener más información sobre los planes y costos de FullService.';
+    const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  }
+</script>
 
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    var menuIcon = document.getElementById('menu-icon');
+    var navLinks = document.getElementById('nav-links');
+
+    menuIcon.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
+    });
+
+    // Close the menu when a link is clicked
+    navLinks.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            navLinks.classList.remove('open');
+        });
+    });
+});
+</script>
+  -->
+    <script src="./assets/js/contacto.js"></script>
+    <script src="./assets/js/scripts.js"></script>
+    <script src="./assets/js/scripts-front.js"></script>
 </body>
-</html>
+</html>   

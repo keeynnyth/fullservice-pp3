@@ -20,27 +20,79 @@ function verificarToken(req, res, next) {
 
 // Registrar nuevo turno
 router.post("/", verificarToken, (req, res) => {
-  const { fecha, hora, servicios, motivo } = req.body;
+  const {
+    fecha,
+    hora,
+    motivo,
+    servicios,
+    marca,
+    modelo,
+    anio,
+    taller,
+    taller_seleccionado,
+    taller_externo_nombre,
+    taller_externo_direccion,
+    taller_externo_telefono
+  } = req.body;
+
   const usuarioId = req.usuario.id;
 
-  const query = "INSERT INTO turnos (usuario_id, fecha, hora, servicios, motivo) VALUES (?, ?, ?, ?, ?)";
-  db.query(query, [usuarioId, fecha, hora, servicios.join(", "), motivo], (err, result) => {
+  // Asegurar que servicios sea un string separado por comas
+  const serviciosStr = Array.isArray(servicios) ? servicios.join(", ") : servicios;
+
+  const query = `
+    INSERT INTO turnos (
+      usuario_id, fecha, hora, motivo, servicios, 
+      marca, modelo, anio, taller, 
+      taller_seleccionado, taller_externo_nombre, 
+      taller_externo_direccion, taller_externo_telefono
+    ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const valores = [
+    usuarioId,
+    fecha,
+    hora,
+    motivo,
+    serviciosStr,
+    marca,
+    modelo,
+    anio,
+    taller,
+    taller_seleccionado,
+    taller_externo_nombre,
+    taller_externo_direccion,
+    taller_externo_telefono
+  ];
+
+  db.query(query, valores, (err, result) => {
     if (err) {
-      console.error("Error al insertar turno:", err);
+      console.error("❌ Error al insertar turno:", err);
       return res.status(500).json({ mensaje: "Error al registrar el turno" });
     }
-    res.status(201).json({ mensaje: "Turno registrado correctamente" });
+    res.status(201).json({ mensaje: "✅ Turno registrado correctamente" });
   });
 });
 
 // Obtener historial de turnos del usuario
 router.get("/historial", verificarToken, (req, res) => {
   const usuarioId = req.usuario.id;
-  const query = "SELECT fecha, hora, servicios, motivo FROM turnos WHERE usuario_id = ? ORDER BY fecha DESC";
+
+  const query = `
+    SELECT 
+      fecha, hora, motivo, servicios, 
+      marca, modelo, anio, taller, 
+      taller_seleccionado, taller_externo_nombre, 
+      taller_externo_direccion, taller_externo_telefono 
+    FROM turnos 
+    WHERE usuario_id = ? 
+    ORDER BY fecha DESC
+  `;
 
   db.query(query, [usuarioId], (err, resultados) => {
     if (err) {
-      console.error("Error al obtener historial:", err);
+      console.error("❌ Error al obtener historial:", err);
       return res.status(500).json({ mensaje: "Error al obtener el historial" });
     }
     res.json(resultados);

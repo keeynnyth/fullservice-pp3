@@ -1,5 +1,5 @@
 // contacto.js (FRONTEND)
-
+/*
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('form-contacto');
   const respuesta = document.getElementById('respuesta');
@@ -37,4 +37,35 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('reset', function () {
     document.getElementById('respuesta').innerText = '';
   });
-});
+});   */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-contacto");
+    const respuesta = document.getElementById("respuesta");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          form.reset();
+          respuesta.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarnos!";
+        } else {
+          respuesta.textContent = "❌ Ocurrió un error al enviar el mensaje.";
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        respuesta.textContent = "❌ Hubo un problema de conexión. Intentalo más tarde.";
+      });
+    });
+  });
