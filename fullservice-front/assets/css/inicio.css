@@ -1,0 +1,68 @@
+
+
+:root{
+
+--azul-oscuro: #0606A2;
+--azul-morado: #2a2aae;
+--celete:#60b3ff;
+--blanco: #FFFFFF;
+--negro: #000000;
+--gris-oscuro: #50464d;
+--gris-claro: #f2f2f2f2;
+
+}
+ 
+
+
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin: 0;
+  background: url("../../imagenes/happy-customer-buying-new-car-dealership-1024x684.webp") no-repeat center center fixed;
+  background-size: cover;
+}
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.5); /* blanco con transparencia */
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-top: 100px; /* espacio desde arriba */
+      align-items: center;
+      backdrop-filter: blur(10px); /* desenfoque de fondo */
+    
+    }
+
+    .logo-inicio {
+  width: 400px;       /* ajustá el tamaño que necesites */
+  margin-bottom: 20px;
+}
+
+    h1 {
+      color: var(--azul-oscuro)
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 15px 10px;
+      padding: 12px 20px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    #cerrarSesion {
+      background-color: #dc3545;
+    }
+
+    #cerrarSesion:hover {
+      background-color: #a71d2a;
+    }

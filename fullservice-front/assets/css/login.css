@@ -1,0 +1,189 @@
+
+
+
+:root{
+
+--azul-oscuro: #0606A2;
+--azul-morado: #2a2aae;
+--celete:#60b3ff;
+--blanco: #FFFFFF;
+--negro: #000000;
+--gris-oscuro: #50464d;
+--gris-claro: #f2f2f2f2;
+
+}
+ 
+
+
+
+* 
+
+
+
+
+
+{
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("../../imagenes/chasis.jpg") no-repeat center center fixed;
+      background-size: cover;
+
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main.main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+header {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px 20px; /* menos padding para que no crezca mucho */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  height: 100px; /* mejor no poner altura fija */
+  display: flex;
+  align-items: center; /* para centrar verticalmente */
+  justify-content: flex-start; /* logo a la izquierda */
+}
+
+
+#header-logo img {
+  width: 400px;   /* o el tamaño que prefieras */
+  height: auto;
+  margin-top: -20px; /* si querés subirlo un poco */
+}
+
+
+
+   .form-container {
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+    url("imagenes/fullservice.png"); /* Ruta de tu logo transparente */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  padding: 30px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+  background: rgba(255, 255, 255, 0.5); 
+    backdrop-filter: blur(10px); /* desenfoque de fondo */
+}
+
+
+    h2 {
+      text-align: center;
+      color: #2a2aae;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #110202;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #mensaje {
+      margin-top: 15px;
+      text-align: center;
+      color: red;
+      font-size: 14px;
+    }
+
+    footer#footer {
+  background-color: #2a2aae;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+footer#footer h2#visitar {
+  font-size: 20px;
+  color: white;
+  font-style: italic;
+}
+
+footer#footer .redes-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+footer#footer .redes-container img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+footer#footer .redes-container img:hover {
+  transform: scale(1.2);
+}
+
+@media (max-width: 500px) {
+  footer#footer h2#visitar {
+    font-size: 16px;
+  }
+  
+  footer#footer .redes-container img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+
+    @media (max-width: 500px) {
+      .form-container {
+        padding: 20px 15px;
+      }
+
+      h2 {
+        font-size: 22px,
+        
+      }
+
+      label,
+      input,
+      button {
+        font-size: 14px;
+      }
+    
+
+    }

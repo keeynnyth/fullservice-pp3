@@ -1,0 +1,90 @@
+
+:root{
+
+--azul-oscuro: #0606A2;
+--azul-morado: #2a2aae;
+--celete:#60b3ff;
+--blanco: #FFFFFF;
+--negro: #000000;
+--gris-oscuro: #50464d;
+--gris-claro: #f2f2f2f2;
+
+}
+
+
+
+
+body {
+  background-image: url("../../imagenes/marketing-taller.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+} /* <-- Cerrá la llave de body acá */
+
+#registro {
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 10px; /* Reducido de 20px a 10px */
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  margin: 20px auto; /* Menos margen arriba y abajo */
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px); /* desenfoque de fondo */
+}
+.logo {
+  width: 300px;
+  margin: 10px;
+}
+
+#registro h2 {
+  margin-top: 0;
+  margin-bottom: 10px; /* Reduce espacio debajo del título */
+}
+
+#registro label {
+  display: block;
+  margin-top: 5px; /* Reduce espacio arriba de cada label */
+  margin-bottom: 2px; /* Reduce espacio debajo de cada label */
+  font-size: 0.9em; /* Texto un poco más chico */
+}
+
+#registro input,
+#registro button {
+  width: 100%;
+  padding: 8px; /* Menor altura */
+  margin-top: 5px;
+  font-size: 0.9em; /* Texto más compacto */
+  box-sizing: border-box;
+}
+
+.volver-login {
+  margin-top: 10px; /* Reduce espacio antes del bloque de login */
+  text-align: center;
+}
+
+.volver-login p {
+  margin: 5px 0;
+}
+
+#registro button {
+  padding: 8px;
+}
+
+@media (max-height: 700px) {
+  /* Si la altura de la pantalla es muy baja, reducí aún más */
+  #registro {
+    margin: 10px auto;
+    padding: 5px;
+  }
+
+  #registro input,
+  #registro button {
+    padding: 6px;
+    font-size: 0.8em;
+  }
+
+  #registro h2 {
+    font-size: 1em;
+  }
+}

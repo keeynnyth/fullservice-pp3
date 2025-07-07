@@ -237,6 +237,121 @@ main {
 }
 */
 
+#ubicaciones {
+    background-color: #f4f4f4;
+    margin-top: 3rem;
+    padding: 2rem;
+    border-radius: 10px;
+}
+.mapa-principal {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.mapa-principal iframe {
+    border-radius: 10px;
+    width: 100%;
+    height: 300px;
+}
+#ubicaciones  {
+    max-width: 100%;
+    margin: auto;
+    width: 96%;
+    padding: 20px;
+    background-color: var(--gris-claro);
+    border-radius: 8px;
+   
+        box-shadow: 4px 4px 6px var(--gris-oscuro);
+        margin-bottom: 40px;
+}
+#ubicaciones h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--azul-oscuro);
+    font-size: 1.5rem;
+    font-style: italic;
+    
+}
+
+.mapa-principal h3 {
+    color: var(--azul-oscuro);
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.acordeon-sedes {
+    margin: auto;
+    margin-top: 20px;
+    max-width: 100%;
+    width: 50%;
+}
+.acordeon-sedes details {
+    margin-bottom: 10px;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.acordeon-sedes summary {
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.acordeon-sedes p {
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.acordeon-sedes summary:hover {
+    color: var(--azul-oscuro);
+}   
+.acordeon-sedes details[open] summary {
+    color: var(--azul-oscuro);
+}
+
+.acordeon-sedes h3{
+    color: var(--azul-oscuro);
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: px;
+    font-family: 'Courier New', Courier, monospace;
+}
+summary::marker {
+    color: var(--azul-oscuro);
+}
+ summary span {
+    color: var(--azul-oscuro);
+    font-weight: bold;  
+    font-style: italic;
+ }
+
+ summary{
+    color: var(--gris-oscuro);
+    font-weight: bold;  
+    font-style: italic;
+    font-size: 1.2rem;
+ }
+
+ #servicios {
+    max-width: 100%;
+    margin-top: 40px;
+    text-align: center;
+    box-shadow: 4px 4px 6px var(--gris-oscuro);
+    background-color: var(--gris-claro);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    width: 100%;
+   
+}
+
+
 .servicio {
     display: flex;
    flex-direction: column;
@@ -334,6 +449,8 @@ main {
     padding: 8px;
     width: 90%;
 }
+
+
 
 
 #contactoWhatsApp {
@@ -476,6 +593,55 @@ main {
   background-color: #218838;
 }
 
+#ubicaciones {
+  background-color: #f4f4f4;
+  margin-top: 3rem;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.mapa-principal iframe {
+  border-radius: 10px;
+  width: 100%;
+  height: 300px;
+}
+
+.acordeon-sedes {
+  margin-top: 2rem;
+}
+
+.acordeon-sedes details {
+  margin-bottom: 10px;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.acordeon-sedes summary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.acordeon-sedes p {
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+
+.nav-links li a {
+    color: var(--azul-oscuro);
+    padding: 7px;
+    margin: auto;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+
 @media (max-width: 600px) {
   .volver-login button {
     width: 100%;
@@ -491,6 +657,8 @@ main {
     padding: 0.5rem;
     font-size: 0.9rem;
   }
+
+ 
 }
 
 
@@ -916,8 +1084,243 @@ footer {
     -o-border-radius: 10%;
 }
 
+#nav-links li a {
+ 
+    padding: 7px;
+    margin: auto;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}   
+
+#servicios .container1{
+    max-width: 100%;
+    margin:auto ;
+   
+    width: 90%;
+
+    height: 550px;
+    border-radius: 8px;
+   background-color: var(--azul-morado);
+   background: transparent;
+   
+
+    
+}
+
+#servicios .container1 .slider{
+    width: 100%;
+    height:500px;
+    overflow: hidden;
+   
+  
+}
+
+#servicios .container1 img{
+    max-width: 100%;
+    width: 100%;
+ height: 450px;
+ margin-top: 0;
+ padding-bottom: 0;
+}
+
+#servicios .container1 .slider p{
+    font-size: 18px;
+    background-color: var(--gris-claro);
+    margin: auto;
+}
+
+ul,li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul.slider{
+    position: relative;
+    width: 800px;
+    height: 450px;
+}
+
+ul.slider li{
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: inherit;
+    height: inherit;
+    background-color: #FFFFFF;
+    transition: opacity .5s;
+}
+
+ul.slider li img{
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    margin-top: 30px;
+    border-radius: 8px;
+}
+
+ li p{
+    margin-right: -500px;
+    color: var(--azul-morado);
+    font-weight: bolder;
+    margin-top: 0;
+}
+
+ul.slider li:first-child{
+    opacity: 1;
+}
+
+ul.slider li:target{
+    opacity: 1;
+}
+
+.menu{
+    text-align: center;
+    margin: 20px;
+   
+}
+
+.menu li{
+    display: inline-block;
+    text-align: center;
+}
+
+.menu li a{
+    display: inline-block;
+    color: var(--gris-claro);
+    text-decoration: none;
+    background-color: transparent;
+    padding: 10px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    border-radius: 100%;
+}
+
+#servicio label{
+    font-size: 1.5rem;
+    font-weight: bold;
+   margin-bottom: 5px;
+display: flex;
+align-items: center;
 
 
+   margin-right: -1150px;
+  
+
+   width: 100%;
+   padding: 5px;
+   max-width: 100%;
+}
+
+/* aqui los del otro carrusel */
+#servicios .container1{
+    max-width: 100%;
+    margin:auto ;
+   
+    width: 90%;
+
+    height: 550px;
+    border-radius: 8px;
+   background-color: var(--azul-morado);
+   background: transparent;
+   
+
+    
+}
+
+#servicios .container1 .slider{
+    width: 100%;
+    height:500px;
+    overflow: hidden;
+   
+  
+}
+
+#servicios .container1 img{
+    max-width: 100%;
+    width: 100%;
+ height: 450px;
+ margin-top: 0;
+ padding-bottom: 0;
+}
+
+#servicios .container1 .slider p{
+    font-size: 18px;
+    background-color: var(--gris-claro);
+    margin: auto;
+}
+
+ul,li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul.slider{
+    position: relative;
+    width: 800px;
+    height: 450px;
+}
+
+ul.slider li{
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: inherit;
+    height: inherit;
+    background-color: #FFFFFF;
+    transition: opacity .5s;
+}
+
+ul.slider li img{
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    margin-top: 30px;
+    border-radius: 8px;
+}
+
+ li p{
+    margin-right: -500px;
+    color: var(--azul-morado);
+    font-weight: bolder;
+    margin-top: 0;
+}
+
+ul.slider li:first-child{
+    opacity: 1;
+}
+
+ul.slider li:target{
+    opacity: 1;
+}
+
+.menu{
+    text-align: center;
+    margin: 20px;
+   
+}
+
+.menu li{
+    display: inline-block;
+    text-align: center;
+}
+
+.menu li a{
+    display: inline-block;
+    color: var(--gris-claro);
+    text-decoration: none;
+    background-color: var(--azul-oscuro);
+    padding: 10px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    border-radius: 100%;
+}
 /* Responsive design */
 @media (max-width: 768px) {
     body{
@@ -991,10 +1394,21 @@ footer {
 }
  #nav-links li a:hover{
     color: var(--gris-claro);
-    background-color: var(--azul-oscuro);
+    background-color:  var(--azul-oscuro);
+    border-radius: 5px;
+    padding: 10px;
+    border-radius: 5px;
+  
    ;}
 
-
+#nav-links li a{
+    color: var(--gris-claro);
+    padding: 7px;
+    margin: auto;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 .open{
     display: flex;
     flex-direction: row;
@@ -1500,8 +1914,107 @@ main {
     max-height: 100vh;
 }
 
+#nav-links.open li a{
+    color: var(--azul-oscuro);
+    padding: 7px;
+    margin: auto;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+#nav-links.open li a:hover{
+    color: var(--gris-claro);
+    background-color:  var(--azul-oscuro);
+    border-radius: 5px;
+    padding: 5px;
+    border-radius: 5px;
+  
+   ;}   
 /* Estilos base para el nav-links (menú hamburguesa) */
+/* 
+.acordeon-sedes{
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 95%;
+    width: 90%;
+    background-color: var(--gris-claro);
+    padding: 20px;
+    border-radius: 8px;
+   
+    color: var(--azul-oscuro);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    margin-left: -45px;
+    margin-top: 20px;
+    */
+
+    #ubicaciones {
+    background-color: #f4f4f4;  
+    margin-top: 3rem;
+    padding: 2rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    width: 90%;
+    
+    color: var(--azul-oscuro);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+margin-left: -10px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 6px var(--gris-oscuro);
+}
+
+
+
+.acordeon-sedes {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 95%;
+    width: 90%;
+    background-color: var(--gris-claro);
+    padding: 20px;
+    border-radius: 8px;
+   
+    color: var(--azul-oscuro);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+  
+   }
+
+   .mapa-principal iframe {
+    border-radius: 10px;
+    width: 100%;
+    height: 300px;
+ 
+
+}
+
+#ubicaciones h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--azul-oscuro);
 
 
 }
+
+button #contactoWhatsApp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.5rem;          
+}
+
+}
+
 /*
