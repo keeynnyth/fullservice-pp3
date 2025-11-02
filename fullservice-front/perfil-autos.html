@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mis autos | FullService</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./assets/css/login.css" />
+   <link rel="stylesheet" href="./assets/css/perfil-autos" />
+  <style>
+    :root{
+
+--azul-oscuro: #0606A2;
+--azul-morado: #2a2aae;
+--celete:#60b3ff;
+--blanco: #FFFFFF;
+--negro: #000000;
+--gris-oscuro: #50464d;
+--gris-claro: #f2f2f2f2;
+
+}
+    .wrap{max-width:900px;margin:24px auto;padding:16px}
+    .card{background:#fff;border:1px solid #eee;border-radius:12px;padding:18px}
+    .grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+         h2{
+    box-shadow: 5px 4px 10px rgba(0,0,0,0.6);
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: var(--azul-morado);
+    color:var(--blanco) ;
+
+   }
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    label{font-weight:600;display:block;margin-bottom:6px}
+    input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}
+    .btn{border:1px solid #ddd;background:#fafafa;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn-primary{background:#f0f7ff;border-color:#cfe2ff}
+    .btn-danger{background:#fee;border-color:#f5c2c7;color:#842029}
+    .row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end}
+    @media(max-width:900px){.row{grid-template-columns:1fr}}
+    .item{border:1px solid #eee;border-radius:10px;padding:10px;margin-bottom:10px}
+    .flash{margin-top:12px;padding:12px 14px;border-radius:8px;font-weight:600}
+    .flash-success{background:#e8f8ef;color:#0f5132;border:1px solid #badbcc}
+    .flash-error{background:#fdecea;color:#611a15;border:1px solid #f5c2c7}
+
+    .btn{
+      background-color: var(--azul-morado);
+    color:var(--blanco) ;
+    text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <h2 style="margin:0">Mis autos</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="perfil.html">← Volver a mi perfil</a>
+        <a class="btn" href="solicitar-turno.html">📅 Solicitar turno</a>
+      </div>
+    </div>
+
+    <div id="fb" class="flash" hidden></div>
+
+    <div class="card" style="margin-top:12px">
+      <h3 style="margin-top:0">Registrados</h3>
+      <div id="lista" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-top:0">Agregar vehículos</h3>
+
+      <div id="new-container"></div>
+      <button class="btn" id="btn-add">➕ Agregar otro vehículo</button>
+      <div style="margin-top:12px">
+        <button class="btn btn-primary" id="btn-save">💾 Guardar</button>
+        <button class="btn" id="btn-cancel">Cancelar</button>
+      </div>
+      <div id="fb2" class="flash" hidden></div>
+    </div>
+  </div>
+
+  <template id="tpl-row">
+    <div class="item row">
+      <div>
+        <label>Marca</label>
+        <select class="marca" required>
+          <option value="" disabled selected>Marca</option>
+        </select>
+      </div>
+      <div>
+        <label>Modelo</label>
+        <select class="modelo" required disabled>
+          <option value="" disabled selected>Modelo</option>
+        </select>
+      </div>
+      <div>
+        <label>Año</label>
+        <input type="number" class="anio" min="1950" max="2099" placeholder="Ej: 2018" required />
+      </div>
+      <div>
+        <button class="btn btn-danger btn-del" type="button">Quitar</button>
+      </div>
+    </div>
+  </template>
+
+  <script type="module" src="./assets/js/perfl-autos.js"></script>
+</body>
+</html>
+

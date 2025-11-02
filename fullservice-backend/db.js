@@ -1,24 +1,27 @@
 
 
-const mysql = require('mysql2');
+// db.js  <<<<<< REEMPLAZA COMPLETO ESTE ARCHIVO
+const mysql = require('mysql2/promise');
 
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'root', // Cambia si tu contraseña es distinta
-  database: 'fullservice_db',
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || '127.0.0.1',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASS || '',
+  database: process.env.DB_NAME || 'fullservice_db',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
-db.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ Error al conectar con la base de datos:', err);
-  } else {
+// Sanity check al arrancar (con API promise)
+(async () => {
+  try {
+    const conn = await pool.getConnection(); // <- PROMISE, sin callback
     console.log('✅ Conexión a base de datos establecida');
-    connection.release(); // Liberar conexión de prueba
+    conn.release();
+  } catch (e) {
+    console.error('❌ Error conectando a la base de datos:', e.message);
   }
-});
+})();
 
-module.exports = db;
+module.exports = { pool };

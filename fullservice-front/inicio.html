@@ -7,7 +7,9 @@
   <title>Inicio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="./assets/css/inicio.css" />
-
+  <style>
+   
+  </style>
 </head>
 <body>
 
@@ -16,27 +18,32 @@
 
     <a href="solicitar-turno.html" class="btn">Solicitar turno</a>
     <a href="historial-turnos.html" class="btn">Ver historial</a>
+    <a href="perfil.html" class="btn">Mi Perfil</a>
+
     <button id="cerrarSesion" class="btn">Cerrar sesión</button>
+
+    <!-- Botón de Volver a la Página Principal -->
+    <button class="btn btn-secundario" onclick="window.location.href='index.html'">🏠 Volver al inicio</button>
   </div>
 
   <script>
+    // Obtener el nombre del usuario y mostrar un saludo personalizado
     const nombre = localStorage.getItem('nombre');
     const saludo = document.getElementById('saludo');
     saludo.textContent = nombre ? `Bienvenido/a, ${nombre}` : "Bienvenido/a";
 
+    // Funcionalidad para el botón "Cerrar sesión"
     document.getElementById('cerrarSesion').addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = 'index.html';
+      localStorage.clear();  // Limpiar el localStorage
+      window.location.href = 'index.html';  // Redirigir al login
     });
-  </script>
 
-  <script>
-  // Verificar si el usuario está autenticado
-  if (!localStorage.getItem('nombre')) {
-    alert('Por favor, inicia sesión primero.');
-    window.location.href = 'index.html';
-  }
-    </script>
+    // Verificar si el usuario está autenticado
+    if (!localStorage.getItem('nombre')) {
+      alert('Por favor, inicia sesión primero.');
+      window.location.href = 'index.html';  // Redirigir al login si no está autenticado
+    }
+  </script>
 
 </body>
 </html>

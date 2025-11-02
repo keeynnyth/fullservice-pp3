@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,13 +27,28 @@
     .card h2 {
       margin-bottom: 1rem;
     }
+    .btn-secundario {
+      padding: 10px 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .btn-secundario:hover {
+      background-color: #d32f2f;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>¡Bienvenido!</h2>
     <p>Has iniciado sesión correctamente.</p>
-    <a href="index.html">Volver al inicio</a>
+    <a href="index.html" class="btn-secundario">Volver al inicio</a>
+    <!-- Botón para Volver Atrás -->
+    <button class="btn-secundario" onclick="window.history.back()">🔙 Volver Atrás</button>
   </div>
 
   <script>
@@ -46,7 +63,6 @@
     // Opcional: podrías verificar el token con el servidor más adelante
   });
 </script>
-
 
 </body>
 </html>

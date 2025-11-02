@@ -7,13 +7,40 @@
   <title>Solicitar Turno</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="./assets/css/solicitar-turno.css" />
-  
+
 </head>
 <body>
 
 <div class="form-container">
-  <h2>Solicitar Turno</h2>
-  <form id="form-turno">
+  <div class="toolbar">
+    <h2 style="margin:0">Solicitar Turno</h2>
+    <a class="btn-secundario" href="inicio.html">🔙 Volver al inicio</a>
+  </div>
+
+  <form id="form-turno" autocomplete="on">
+    <label for="autoSelect">Tu vehículo</label>
+    <select id="autoSelect" required>
+      <option value="" disabled selected>Cargando autos…</option>
+    </select>
+    <small class="muted">
+      <a href="perfil-autos.html">+ Agregar nuevo auto</a>
+    </small>
+
+    <div class="row readonly" style="margin-top:10px">
+      <div class="campo">
+        <label>Marca</label>
+        <input type="text" id="marca" readonly />
+      </div>
+      <div class="campo">
+        <label>Modelo</label>
+        <input type="text" id="modelo" readonly />
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Año</label>
+      <input type="number" id="anio" readonly />
+    </div>
 
     <label for="fecha">Fecha:</label>
     <input type="date" id="fecha" required />
@@ -23,37 +50,16 @@
 
     <label>Servicio(s) a realizar:</label>
     <div class="checkbox-group" id="servicios">
-      <label><input type="checkbox" value="Lavado especial" /> Lavado especial</label>
-      <label><input type="checkbox" value="Lavado del motor" /> Lavado del motor</label>
-      <label><input type="checkbox" value="Lavado de tapicería" /> Lavado de tapicería</label>
-      <label><input type="checkbox" value="Cambio de aceite" /> Cambio de aceite</label>
-      <label><input type="checkbox" value="Frenos" /> Frenos</label>
-      <label><input type="checkbox" value="Chequeo general" /> Chequeo general</label>
+      <label><input type="checkbox" class="serv" value="Lavado especial" /> Lavado especial</label>
+      <label><input type="checkbox" class="serv" value="Lavado del motor" /> Lavado del motor</label>
+      <label><input type="checkbox" class="serv" value="Lavado de tapicería" /> Lavado de tapicería</label>
+      <label><input type="checkbox" class="serv" value="Cambio de aceite" /> Cambio de aceite</label>
+      <label><input type="checkbox" class="serv" value="Frenos" /> Frenos</label>
+      <label><input type="checkbox" class="serv" value="Chequeo general" /> Chequeo general</label>
     </div>
 
-    <label for="marca">Marca del vehículo:</label>
-    <select id="marca" required>
-      <option value="">Selecciona una marca</option>
-      <option value="Volkswagen">Volkswagen</option>
-      <option value="Renault">Renault</option>
-      <option value="Ford">Ford</option>
-      <option value="Chevrolet">Chevrolet</option>
-      <option value="Peugeot">Peugeot</option>
-      <option value="Fiat">Fiat</option>
-      <option value="Toyota">Toyota</option>
-      <option value="Honda">Honda</option>
-      <option value="Citroën">Citroën</option>
-      <option value="Nissan">Nissan</option>
-    </select>
-
-    <label for="modelo">Modelo:</label>
-    <input type="text" id="modelo" placeholder="Ej: Gol, Clio, Ka, etc." required />
-
-    <label for="anio">Año:</label>
-    <input type="number" id="anio" min="1980" max="2025" required />
-
     <label for="taller">Tipo de taller:</label>
-    <select id="taller" required onchange="mostrarOpcionesTaller()">
+    <select id="taller" required>
       <option value="">Selecciona una opción</option>
       <option value="FullService">Taller FullService</option>
       <option value="Asociado">Taller Asociado</option>
@@ -75,10 +81,8 @@
     <div id="taller-externo-opciones" class="hidden">
       <label for="tallerNombre">Nombre del taller:</label>
       <input type="text" id="tallerNombre" />
-
       <label for="tallerDireccion">Dirección:</label>
       <input type="text" id="tallerDireccion" />
-
       <label for="tallerTelefono">Teléfono:</label>
       <input type="text" id="tallerTelefono" />
     </div>
@@ -86,102 +90,243 @@
     <label for="motivo">¿Te gustaría comentarnos algo más?</label>
     <textarea id="motivo" rows="4"></textarea>
 
-    <button type="submit">Enviar Turno</button>
-    <p id="mensaje"></p>
+    <button type="submit" id="btn-turno">Solicitar turno</button>
+    <p id="mensaje" class="flash" hidden></p>
   </form>
-
-  <button class="btn-secundario" onclick="window.location.href='inicio.html'">🔙 Volver al inicio</button>
 </div>
 
-<!-- 🔧 Corrección aplicada: servicios.join(', ') en el fetch -->
+<script type="module">
+/* ===== API base ===== */
+const CANDIDATES = [
+  'http://127.0.0.1:3000','http://localhost:3000',
+  'http://127.0.0.1:3001','http://localhost:3001'
+];
+let API_BASE = null;
+async function apiBase(){
+  if (API_BASE) return API_BASE;
+  for (const b of CANDIDATES){
+    try { const r = await fetch(b + '/health'); if (r.ok){ API_BASE = b; return b; } } catch {}
+  }
+  API_BASE = CANDIDATES[0];
+  return API_BASE;
+}
 
-<script>
-  function mostrarOpcionesTaller() {
-    const tipo = document.getElementById("taller").value;
-    document.getElementById("taller-asociado-opciones").classList.add("hidden");
-    document.getElementById("taller-externo-opciones").classList.add("hidden");
+/* ===== Token helper (busca en varios lugares) ===== */
+function getCookie(name){
+  return document.cookie.split('; ').find(r => r.startsWith(name+'='))?.split('=')[1];
+}
+function getToken(){
+  // localStorage / sessionStorage
+  const keys = ['token','jwt','auth_token','access_token','Authorization','fs_token'];
+  for (const k of keys){
+    const v = localStorage.getItem(k) || sessionStorage.getItem(k);
+    if (v) return v.replace(/^Bearer\s+/i,'');
+  }
+  // cookies (por si guardaste httpOnly deshabilitado)
+  const cookieCandidates = ['token','jwt','auth_token','access_token'];
+  for (const c of cookieCandidates){
+    const v = getCookie(c);
+    if (v) return decodeURIComponent(v).replace(/^Bearer\s+/i,'');
+  }
+  return null;
+}
 
-    if (tipo === "Asociado") {
-      document.getElementById("taller-asociado-opciones").classList.remove("hidden");
-    } else if (tipo === "Externo") {
-      document.getElementById("taller-externo-opciones").classList.remove("hidden");
+/* ===== UI helpers ===== */
+function showFeedback(el,msg,ok=true){
+  el.hidden = false;
+  el.className = 'flash ' + (ok ? 'flash-success' : 'flash-error');
+  el.textContent = (ok ? '✔️ ' : '❌ ') + msg;
+}
+function hideFeedback(el){
+  el.hidden = true; el.textContent = ''; el.className = 'flash';
+}
+
+/* ===== DOM ===== */
+const form = document.getElementById('form-turno');
+const btn = document.getElementById('btn-turno');
+const msgEl = document.getElementById('mensaje');
+const selAuto = document.getElementById('autoSelect');
+const inMarca = document.getElementById('marca');
+const inModelo = document.getElementById('modelo');
+const inAnio = document.getElementById('anio');
+
+const selTaller = document.getElementById('taller');
+const boxAsoc = document.getElementById('taller-asociado-opciones');
+const boxExt  = document.getElementById('taller-externo-opciones');
+
+function toggleTallerBoxes(){
+  const tipo = selTaller.value;
+  boxAsoc.classList.add('hidden');
+  boxExt.classList.add('hidden');
+  if (tipo === 'Asociado') boxAsoc.classList.remove('hidden');
+  if (tipo === 'Externo')  boxExt.classList.remove('hidden');
+}
+selTaller.addEventListener('change', toggleTallerBoxes);
+
+/* ===== Cache ===== */
+function readCachedAutos(){ try { return JSON.parse(localStorage.getItem('my_autos') || '[]'); } catch { return []; } }
+function writeCachedAutos(arr){ try { localStorage.setItem('my_autos', JSON.stringify(arr || [])); } catch {} }
+
+/* ===== Normalizar respuesta ===== */
+function normalizeAutos(raw){
+  const list = Array.isArray(raw) ? raw
+            : Array.isArray(raw.autos) ? raw.autos
+            : Array.isArray(raw.data)  ? raw.data
+            : [];
+  return list.map(a => ({
+    id: a.id ?? a.auto_id ?? null,
+    marca: a.marca ?? a.brand ?? '',
+    modelo: a.modelo ?? a.model ?? '',
+    anio: a.anio ?? a.year ?? ''
+  })).filter(a => a.marca && a.modelo && a.anio !== '');
+}
+
+/* ===== Fetch autos (usa /autos/mios) ===== */
+async function fetchMyAutos(){
+  const base = await apiBase();
+  const token = getToken();
+  if (!token) throw new Error('Debes iniciar sesión.');
+
+  const res = await fetch(base + '/autos/mios', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  const text = await res.text();
+  let data = {};
+  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+  if (!res.ok){
+    const msg = (data && data.mensaje) ? data.mensaje : ('Error ' + res.status);
+    throw new Error(msg);
+  }
+  return normalizeAutos(data);
+}
+
+/* ===== UI autos ===== */
+function populateAutosSelect(autos){
+  selAuto.innerHTML = '';
+  if (!autos.length){
+    selAuto.innerHTML = '<option value="" disabled selected>No tenés autos registrados</option>';
+    inMarca.value = ''; inModelo.value = ''; inAnio.value = '';
+    return;
+  }
+  const ph = document.createElement('option');
+  ph.value = ''; ph.disabled = true; ph.selected = true; ph.textContent = 'Elegí un auto';
+  selAuto.appendChild(ph);
+
+  for (const a of autos){
+    const opt = document.createElement('option');
+    opt.value = String(a.id ?? '');
+    opt.textContent = `${a.marca} ${a.modelo} (${a.anio})`;
+    opt.dataset.marca = a.marca;
+    opt.dataset.modelo = a.modelo;
+    opt.dataset.anio = a.anio;
+    selAuto.appendChild(opt);
+  }
+  if (autos.length === 1 && autos[0].id != null){
+    selAuto.value = String(autos[0].id);
+    fillAutoFieldsFromOption(selAuto.options[selAuto.selectedIndex]);
+  }
+  selAuto.onchange = function(){
+    const opt = selAuto.options[selAuto.selectedIndex];
+    fillAutoFieldsFromOption(opt);
+  };
+}
+function fillAutoFieldsFromOption(opt){
+  if(!opt || !opt.value){
+    inMarca.value = ''; inModelo.value = ''; inAnio.value = '';
+    return;
+  }
+  inMarca.value = opt.dataset.marca || '';
+  inModelo.value = opt.dataset.modelo || '';
+  inAnio.value   = opt.dataset.anio   || '';
+}
+
+/* ===== Init ===== */
+init();
+async function init(){
+  hideFeedback(msgEl);
+
+  // pinta cache mientras carga
+  const cached = readCachedAutos();
+  if (cached.length > 0) populateAutosSelect(cached);
+  else selAuto.innerHTML = '<option value="" disabled selected>Cargando autos…</option>';
+
+  try{
+    const autos = await fetchMyAutos();   // ← usa /autos/mios con Bearer
+    writeCachedAutos(autos);
+    populateAutosSelect(autos);
+  }catch(e){
+    if (cached.length === 0){
+      showFeedback(msgEl, e?.message || 'No se pudieron cargar tus autos.', false);
     }
   }
+}
 
-  const form = document.getElementById("form-turno");
-  const mensaje = document.getElementById("mensaje");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const fecha = document.getElementById("fecha").value;
-    const hora = document.getElementById("hora").value;
-    const motivo = document.getElementById("motivo").value;
-    const marca = document.getElementById("marca").value;
-    const modelo = document.getElementById("modelo").value;
-    const anio = document.getElementById("anio").value;
-    const tipoTaller = document.getElementById("taller").value;
-    const tallerSeleccionado = document.getElementById("tallerSeleccionado").value;
-    const tallerNombre = document.getElementById("tallerNombre").value;
-    const tallerDireccion = document.getElementById("tallerDireccion").value;
-    const tallerTelefono = document.getElementById("tallerTelefono").value;
 
-    const serviciosCheckboxes = document.querySelectorAll("#servicios input[type='checkbox']");
-    const servicios = Array.from(serviciosCheckboxes)
-      .filter(c => c.checked)
-      .map(c => c.value)
-      .join(', '); // ✅ CORREGIDO
+/* ===== Envío del turno ===== */
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  hideFeedback(msgEl);
 
-    const token = localStorage.getItem("token");
+  const token = getToken();
+  if (!token){ showFeedback(msgEl,'Debes iniciar sesión.',false); return; }
 
-    if (!token) {
-      mensaje.style.color = "red";
-      mensaje.innerText = "Debes iniciar sesión primero.";
-      return;
+  const auto_id = selAuto.value;
+  const fecha   = document.getElementById('fecha').value;
+  const hora    = document.getElementById('hora').value;
+  const motivo  = (document.getElementById('motivo')?.value || '').trim();
+
+  const servicios = Array.from(document.querySelectorAll('.serv:checked')).map(x=>x.value).join(', ');
+
+  const tipoTaller = selTaller.value;
+  const tallerSeleccionado = document.getElementById('tallerSeleccionado')?.value || '';
+  const tallerNombre    = document.getElementById('tallerNombre')?.value || '';
+  const tallerDireccion = document.getElementById('tallerDireccion')?.value || '';
+  const tallerTelefono  = document.getElementById('tallerTelefono')?.value || '';
+
+  if(!auto_id){ showFeedback(msgEl,'Seleccioná un auto.',false); return; }
+  if(!fecha || !hora){ showFeedback(msgEl,'Elegí fecha y hora.',false); return; }
+
+  try{
+    btn.disabled = true; const prev = btn.textContent; btn.textContent = 'Enviando…';
+    const base = await apiBase();
+    const payload = {
+      auto_id,
+      fecha, hora, motivo, servicios,
+      taller: tipoTaller,
+      taller_seleccionado: tallerSeleccionado,
+      taller_externo_nombre: tallerNombre,
+      taller_externo_direccion: tallerDireccion,
+      taller_externo_telefono: tallerTelefono
+    };
+
+    const res = await fetch(base + '/turnos', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+    let data = {}; try{ data = text ? JSON.parse(text) : {}; } catch { data = { raw:text }; }
+
+    if (!res.ok){
+      showFeedback(msgEl, (data && data.mensaje) ? data.mensaje : 'Error al registrar el turno.', false);
+      btn.disabled = false; btn.textContent = prev; return;
     }
 
-    try {
-      const res = await fetch("http://localhost:3000/turnos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-          fecha,
-          hora,
-          motivo,
-          servicios, // ← Ya es un string correcto
-          marca,
-          modelo,
-          anio,
-          taller: tipoTaller,
-          taller_seleccionado: tallerSeleccionado,
-          taller_externo_nombre: tallerNombre,
-          taller_externo_direccion: tallerDireccion,
-          taller_externo_telefono: tallerTelefono
-        })
-      });
+    showFeedback(msgEl, 'Turno registrado con éxito.', true);
+    form.reset();
+    if (selAuto.options.length>0) selAuto.selectedIndex = 0;
+    inMarca.value=''; inModelo.value=''; inAnio.value='';
+    btn.disabled = false; btn.textContent = prev;
 
-      const data = await res.json();
-
-      if (res.ok) {
-        mensaje.style.color = "green";
-        mensaje.innerText = "✅ Turno registrado con éxito.";
-        form.reset();
-        mostrarOpcionesTaller(); // Resetea opciones de taller
-      } else {
-        mensaje.style.color = "red";
-        mensaje.innerText = data.mensaje || "Error al registrar el turno.";
-      }
-    } catch (error) {
-      console.error("Error al enviar el turno:", error);
-      mensaje.style.color = "red";
-      mensaje.innerText = "Error de conexión con el servidor.";
-    }
-  });
+  }catch(err){
+    showFeedback(msgEl, 'Error de conexión con el servidor.', false);
+    btn.disabled = false; btn.textContent = 'Solicitar turno';
+  }
+});
 </script>
-
 
 </body>
 </html>

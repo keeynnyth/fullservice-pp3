@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Perfil | FullService</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./assets/css/login.css" />
+  <link rel="stylesheet" href="./assets/css/perfil.css">
+ 
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <h2 style="margin:0">Mi Perfil</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <a class="btn" href="inicio.html">← Inicio</a>
+        <a class="btn" href="solicitar-turno.html">📅 Solicitar turno</a>
+        <a class="btn" href="perfil-autos.html">🚗 Mis autos</a>
+        <a class="btn" href="baja.html">🗑 Solicitar baja</a>
+        <button class="btn" id="btn-logout">⎋ Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div id="fb" class="flash" hidden></div>
+
+    <div class="grid" style="margin-top:12px">
+      <!-- Datos de cuenta -->
+      <div class="card">
+        <h3 style="margin-top:0">Datos de la cuenta</h3>
+        <div class="kv"><div class="k">Nombre</div><div class="v" id="p-nombre">—</div></div>
+        <div class="kv"><div class="k">Email</div><div class="v" id="p-email">—</div></div>
+        <div class="kv"><div class="k">Rol</div><div class="v" id="p-rol"><span class="badge">—</span></div></div>
+        <!-- Plan debajo de ROL -->
+        <div class="kv"><div class="k">Plan</div><div class="v" id="p-plan">—</div></div>
+        <div class="kv"><div class="k">Registrado</div><div class="v" id="p-creado">—</div></div>
+        <div class="kv"><div class="k">Términos</div><div class="v" id="p-terminos">—</div></div>
+
+        <hr style="margin:14px 0; border:none; border-top:1px solid #eee"/>
+
+        <div class="switch">
+          <input type="checkbox" id="marketing" />
+          <label for="marketing">Quiero recibir comunicaciones operativas y recordatorios (no spam)</label>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn btn-primary" id="btn-save">Guardar preferencias</button>
+        </div>
+        <div id="fb-save" class="flash" hidden></div>
+      </div>
+
+      <!-- Mis vehículos (resumen) -->
+      <div class="card">
+        <h3 style="margin-top:0">Mis vehículos</h3>
+        <div id="autos" class="list"></div>
+        <p class="muted" style="margin-top:8px">Podés agregar o borrar autos desde <a href="perfil-autos.html">Mis autos</a>.</p>
+      </div>
+    </div>
+
+    <!-- Próximos turnos -->
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <h3 style="margin:0">Próximos turnos</h3>
+        <button class="btn" id="btn-toggle-turnos" type="button">⬇ Mostrar turnos</button>
+      </div>
+      <div id="fb-turnos" class="flash" hidden></div>
+      <div id="turnos-wrapper" style="margin-top:12px; display:none;">
+        <div id="lista-turnos" class="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // -------------------- Utilidades base --------------------
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+      try { localStorage.removeItem('token'); localStorage.removeItem('jwt'); localStorage.removeItem('my_autos'); } catch {}
+      window.location.href = 'login.html';
+    });
+
+    const CANDIDATES = [
+      'http://127.0.0.1:3000','http://localhost:3000',
+      'http://127.0.0.1:3001','http://localhost:3001'
+    ];
+    let API_BASE = null;
+    async function apiBase(){
+      if (API_BASE) return API_BASE;
+      for (const b of CANDIDATES) {
+        try { const r = await fetch(b + '/health'); if (r.ok) { API_BASE = b; return b; } } catch {}
+      }
+      throw new Error('API no disponible');
+    }
+    function fb(el,msg,ok=true){ el.hidden=false; el.className='flash '+(ok?'flash-success':'flash-error'); el.textContent=(ok?'✔️ ':'❌ ')+msg; }
+    function hide(el){ el.hidden=true; el.textContent=''; el.className='flash'; }
+    function formatDateTime(iso){
+      try{ const d=new Date(iso); if(isNaN(d.getTime())) return String(iso); return d.toLocaleString(); }
+      catch{ return String(iso); }
+    }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    function getToken(){
+      const keys = ['token','jwt','auth_token','access_token','Authorization','fs_token'];
+      for (const k of keys){
+        const raw = localStorage.getItem(k) || sessionStorage.getItem(k);
+        if (raw){ const val = raw.replace(/^Bearer\s+/i,'').trim(); if(val) return val; }
+      }
+      return null;
+    }
+
+    // -------------------- DOM refs --------------------
+    const $fb = document.getElementById('fb');
+    const $fbSave = document.getElementById('fb-save');
+    const $pNombre = document.getElementById('p-nombre');
+    const $pEmail  = document.getElementById('p-email');
+    const $pRol    = document.getElementById('p-rol');
+    const $pPlan   = document.getElementById('p-plan');
+    const $pCreado = document.getElementById('p-creado');
+    const $pTerminos = document.getElementById('p-terminos');
+    const $autos  = document.getElementById('autos');
+    const $marketing = document.getElementById('marketing');
+    const $btnSave = document.getElementById('btn-save');
+
+    const $fbTurnos = document.getElementById('fb-turnos');
+    const $listaTurnos = document.getElementById('lista-turnos');
+
+    // -------------------- Init --------------------
+    init();
+    async function init(){
+      hide($fb); hide($fbSave); hide($fbTurnos);
+      const token = getToken();
+      if (!token) { fb($fb,'Debes iniciar sesión.',false); return; }
+
+      try {
+        const base = await apiBase();
+        // Perfil (nuevo shape: { usuario: {...}, autos: [...] })
+        const rp = await fetch(base+'/perfil',{ headers:{ Authorization:'Bearer '+token }});
+        const dp = await rp.json();
+        if(!rp.ok){ fb($fb, dp?.mensaje || 'No se pudo cargar tu perfil.', false); return; }
+
+        const u = dp.usuario || {};
+        $pNombre.textContent = u.nombre || '—';
+        $pEmail.textContent  = u.email || '—';
+        $pRol.innerHTML = '<span class="badge">'+(u.rol||'usuario')+'</span>';
+
+        // Plan debajo de ROL
+        const plan = (u.plan || 'standard').toLowerCase();
+        const planName = plan === 'premium' ? 'Premium' : 'Standard';
+        const prices = { standard: 13000, premium: 20000 };
+        const price = prices[plan] ? ` — AR$ ${prices[plan].toLocaleString('es-AR')}/mes` : '';
+        const planState = u.plan_paid ? ' (activo)' : ' (pendiente de pago)';
+        $pPlan.textContent = `${planName}${price}${planState}`;
+
+        if (u.activo === 0) {
+  fb($fb, 'Tu cuenta está desactivada. Contactá soporte para reactivarla.', false);
+  // opcional: deshabilitar botones
+  document.querySelectorAll('a.btn, button.btn').forEach(b=>{
+    if (!/Volver|Inicio|Cerrar sesión/i.test(b.textContent)) b.setAttribute('disabled','disabled');
+  });
+}
+
+
+        $pCreado.textContent = u.creado_en ? formatDateTime(u.creado_en) : '—';
+        $pTerminos.innerHTML = (u.terms_accepted_at
+          ? 'Aceptado el '+formatDateTime(u.terms_accepted_at)+' (versión '+(u.terms_version||'—')+')'
+          : 'Pendiente de aceptación (<a href="politicas.html" target="_blank" rel="noopener">ver política</a>)');
+        $marketing.checked = !!u.marketing_opt_in;
+
+        // Autos (resumen)
+        renderAutos(Array.isArray(dp.autos)?dp.autos:[]);
+        try { localStorage.setItem('my_autos', JSON.stringify(Array.isArray(dp.autos)?dp.autos:[])); } catch {}
+
+        // Próximos turnos
+        await loadTurnos();
+
+      } catch {
+        fb($fb,'Error de conexión con el servidor.',false);
+      }
+    }
+
+    // -------------------- Guardar marketing --------------------
+    $btnSave.addEventListener('click', onSaveMarketing);
+    async function onSaveMarketing(){
+      hide($fbSave);
+      const token = getToken();
+      if (!token) { fb($fbSave,'Debes iniciar sesión.',false); return; }
+      try {
+        $btnSave.disabled = true; $btnSave.textContent = 'Guardando…';
+        const base = await apiBase();
+        const r = await fetch(base+'/perfil', {
+          method:'PUT',
+          headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
+          body: JSON.stringify({ marketing_opt_in: $marketing.checked })
+        });
+        const d = await r.json();
+        if (!r.ok) { fb($fbSave, d?.mensaje || 'No se pudo guardar.', false); return; }
+        fb($fbSave,'Preferencias guardadas.',true);
+      } catch {
+        fb($fbSave,'Error de conexión.',false);
+      } finally {
+        $btnSave.disabled = false; $btnSave.textContent = 'Guardar preferencias';
+      }
+    }
+
+    // -------------------- Render autos --------------------
+    function renderAutos(autos){
+      $autos.innerHTML='';
+      if(!autos.length){ $autos.innerHTML='<div class="muted">No tenés autos cargados.</div>'; return; }
+      for(const a of autos){
+        const row=document.createElement('div');
+        row.className='item';
+        row.innerHTML='<div>'+escapeHtml(a.marca)+' '+escapeHtml(a.modelo)+' ('+escapeHtml(String(a.anio))+')</div>';
+        $autos.appendChild(row);
+      }
+    }
+
+    // -------------------- Próximos turnos --------------------
+    async function loadTurnos(){
+      const token = getToken();
+      if (!token) { fb($fbTurnos,'Sesión no válida.',false); return; }
+      try{
+        const base = await apiBase();
+        const r = await fetch(base+'/turnos/proximos', { headers:{ Authorization:'Bearer '+token }});
+        const data = await r.json();
+        if(!r.ok){ fb($fbTurnos, data?.mensaje || 'No se pudieron cargar los turnos.', false); return; }
+        renderTurnos(Array.isArray(data)?data:[]);
+      }catch{
+        fb($fbTurnos,'Error de conexión.',false);
+      }
+    }
+
+    function renderTurnos(turnos){
+      $listaTurnos.innerHTML='';
+      if(!turnos.length){
+        $listaTurnos.innerHTML = '<div class="item">No tenés turnos próximos.</div>';
+        return;
+      }
+      for(const t of turnos){
+        const node = document.createElement('div');
+        node.className = 'item';
+        node.innerHTML = `
+          <div class="row" style="display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr 1fr">
+            <div>
+              <label>Fecha</label>
+              <input type="date" value="${(t.fecha||'').slice(0,10)}" data-k="fecha">
+            </div>
+            <div>
+              <label>Hora</label>
+              <input type="time" value="${(t.hora||'').slice(0,5)}" data-k="hora">
+            </div>
+            <div>
+              <label>Servicios</label>
+              <input type="text" placeholder="Ej: Cambio de aceite, Frenos" value="${escapeHtml(t.servicios||'')}" data-k="servicios">
+            </div>
+            <div>
+              <label>Motivo</label>
+              <input type="text" value="${escapeHtml(t.motivo||'')}" data-k="motivo">
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:10px; align-items:center;">
+            <button class="btn" data-act="save">💾 Guardar</button>
+            <button class="btn btn-danger" data-act="del">✖ Cancelar</button>
+            <span class="muted" style="margin-left:auto">Vehículo: <strong>${escapeHtml(t.marca)} ${escapeHtml(t.modelo)} (${escapeHtml(String(t.anio))})</strong></span>
+          </div>
+        `;
+        node.querySelector('[data-act="save"]').onclick = () => saveTurno(t.id, node);
+        node.querySelector('[data-act="del"]').onclick  = () => delTurno(t.id, node);
+        $listaTurnos.appendChild(node);
+      }
+    }
+
+    // Plegado/Desplegado
+    const $btnToggle = document.getElementById('btn-toggle-turnos');
+    const $turnosWrapper = document.getElementById('turnos-wrapper');
+    let turnosVisible = false;
+    $btnToggle.addEventListener('click', () => {
+      turnosVisible = !turnosVisible;
+      if (turnosVisible) { $turnosWrapper.style.display = 'block'; $btnToggle.textContent = '⬆ Ocultar turnos'; }
+      else { $turnosWrapper.style.display = 'none'; $btnToggle.textContent = '⬇ Mostrar turnos'; }
+    });
+
+    async function saveTurno(id, node){
+      const token = getToken();
+      if(!token){ fb($fbTurnos,'Sesión no válida.',false); return; }
+      const payload = {};
+      node.querySelectorAll('[data-k]').forEach(inp => payload[inp.getAttribute('data-k')] = inp.value);
+      try{
+        const base = await apiBase();
+        const r = await fetch(base+'/turnos/'+id, {
+          method:'PUT',
+          headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
+          body: JSON.stringify(payload)
+        });
+        const d = await r.json();
+        if(!r.ok){ fb($fbTurnos, d?.mensaje || 'No se pudo actualizar el turno.', false); return; }
+        fb($fbTurnos,'Turno actualizado.', true);
+      }catch{
+        fb($fbTurnos,'Error de conexión.', false);
+      }
+    }
+
+    async function delTurno(id, node){
+      if(!confirm('¿Cancelar este turno?')) return;
+      const token = getToken();
+      if(!token){ fb($fbTurnos,'Sesión no válida.',false); return; }
+      try{
+        const base = await apiBase();
+        const r = await fetch(base+'/turnos/'+id, { method:'DELETE', headers:{ Authorization:'Bearer '+token }});
+        const d = await r.json();
+        if(!r.ok){ fb($fbTurnos, d?.mensaje || 'No se pudo cancelar el turno.', false); return; }
+        node.remove();
+        fb($fbTurnos,'Turno cancelado.', true);
+      }catch{
+        fb($fbTurnos,'Error de conexión.', false);
+      }
+    }
+  </script>
+</body>
+</html>

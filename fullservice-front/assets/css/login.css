@@ -82,7 +82,64 @@ header {
     backdrop-filter: blur(10px); /* desenfoque de fondo */
 }
 
+#btn-logout{
+  background-color: var(--azul-oscuro);
+  color:white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: block;
+  margin: auto;
+}
 
+#btn-logout:hover{
+  background-color: var(--azul-morado);
+  transition: background-color 0.3s ease;
+}
+#btn-logout:active{
+  transform: scale(0.98);
+}
+
+#btn-toggle-turnos{
+  background-color: var(--azul-oscuro);
+  color:white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: block;
+  margin: auto;
+}
+#btn-toggle-turnos:hover{
+  background-color: var(--azul-morado);
+  transition: background-color 0.3s ease;
+}
+
+btn#btn-toggle-turnos:active{
+  transform: scale(0.98);
+}
+
+.btn btn-primary,#btn-save{
+  background-color: var(--azul-oscuro);
+  color:white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: block;
+  margin: auto;
+} 
+.card{
+  color: var(--azul-oscuro);
+  background: rgba(255, 255, 255, 0.5); 
+    backdrop-filter: blur(10px); /* desenfoque de fondo */
+     background: 
+    linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+}
     h2 {
       text-align: center;
       color: #2a2aae;
@@ -109,7 +166,7 @@ header {
       width: 100%;
       padding: 12px;
       margin-top: 20px;
-      background-color: #007BFF;
+      background-color: var(--azul-morado);
       color: white;
       border: none;
       border-radius: 5px;
@@ -156,6 +213,8 @@ footer#footer .redes-container img {
 footer#footer .redes-container img:hover {
   transform: scale(1.2);
 }
+
+
 
 @media (max-width: 500px) {
   footer#footer h2#visitar {

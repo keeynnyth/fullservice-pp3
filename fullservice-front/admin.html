@@ -1,31 +1,79 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel de Administración</title>
-  <link rel="stylesheet" href="./assets/css/estilos.css" />
+  <link rel="stylesheet" href="./assets/css/admin.css" />
 </head>
 <body>
-  <h2 class="titulo-admin">Usuarios registrados</h2>
-  <div class="tabla-responsive">
-    <table id="tabla-usuarios">
-     <thead>
-  <tr>
-    <th>ID</th>
-    <th>Nombre</th>
-    <th>Email</th>
-    <th>Registrado</th>
-    <th>Acciones</th> <!-- Nueva columna -->
-  </tr>
-</thead>
+  <div class="wrap">
+    <div class="toolbar">
+      <h2 class="title">Panel de Administración</h2>
+      <div class="btn-row">
+        <a class="btn" href="inicio.html">← Panel usuario</a>
+        <button class="btn" id="btn-logout">⎋ Cerrar sesión</button>
+      </div>
+    </div>
 
-      <tbody>
-        <!-- Aquí se cargarán los usuarios -->
-      </tbody>
-    </table>
+    <div id="fb" class="flash" hidden></div>
+
+    <div class="layout">
+      <!-- Columna izquierda: listado -->
+      <aside class="card">
+        <div class="search">
+          <input id="q" type="search" placeholder="Buscar por nombre, email o rol…" />
+        </div>
+        <div class="list" id="user-list"></div>
+      </aside>
+
+      <!-- Columna derecha: detalle -->
+      <section class="card right">
+        <div class="head">
+          <div class="head-row">
+            <div>
+              <div id="u-nombre" class="head-name">—</div>
+              <div id="u-email" class="muted">—</div>
+            </div>
+            <span id="u-rol" class="badge">—</span>
+            <span id="u-activo" class="badge">—</span>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="row">
+            <div class="kv"><div class="k">ID</div><div id="u-id">—</div></div>
+            <div class="kv"><div class="k">Registrado</div><div id="u-creado">—</div></div>
+            <div class="kv"><div class="k">Plan</div><div id="u-plan">—</div></div>
+            <div class="kv"><div class="k">Estado plan</div><div id="u-plan-paid">—</div></div>
+          </div>
+
+          <div class="btn-row gap-top">
+            <button class="btn" id="act-rol">Cambiar a admin/usuario</button>
+            <button class="btn" id="act-activar">Activar</button>
+            <button class="btn" id="act-desactivar">Desactivar</button>
+            <button class="btn" id="act-reset">Resetear contraseña</button>
+            <button class="btn btn-danger" id="act-delete">Eliminar usuario</button>
+          </div>
+
+          <div id="fb-detail" class="flash" hidden></div>
+
+          <div class="section">
+            <h3 class="section-title">Autos</h3>
+            <div id="autos" class="empty">Sin datos.</div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Turnos</h3>
+            <div id="turnos" class="empty">Sin datos.</div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <script src="./assets/js/admin.js"></script>
+  <script type="module" src="./assets/js/admin.js"></script>
 </body>
 </html>
+

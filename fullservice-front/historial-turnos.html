@@ -6,9 +6,7 @@
   <meta charset="UTF-8" />
   <title>Historial de Turnos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- 
   <link rel="stylesheet" href="./assets/css/historial-turnos.css">
-  
 </head>
 <body>
 
@@ -30,7 +28,7 @@
   fetch("http://localhost:3000/turnos/historial", {
     method: "GET",
     headers: {
-      "Authorization": "Bearer " + token
+      "Authorization": "Bearer " + token  // Enviar el token en la cabecera de la solicitud
     }
   })
     .then(res => res.json())

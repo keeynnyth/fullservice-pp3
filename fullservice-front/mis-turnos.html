@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mis Turnos | FullService</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./assets/css/login.css" />
+  <style>
+    .wrap{max-width:960px;margin:24px auto;padding:16px}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .card{background:#fff;border:1px solid #eee;border-radius:12px;padding:18px}
+    .list{display:grid;gap:12px}
+    .item{border:1px solid #eee;border-radius:10px;padding:12px}
+    .row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+    @media(max-width:900px){.row{grid-template-columns:1fr}}
+    .btn{border:1px solid #ddd;background:#fafafa;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn-danger{background:#fee;border-color:#f5c2c7;color:#842029}
+    .flash{margin-top:12px;padding:12px 14px;border-radius:8px;font-weight:600}
+    .flash-success{background:#e8f8ef;color:#0f5132;border:1px solid #badbcc}
+    .flash-error{background:#fdecea;color:#611a15;border:1px solid #f5c2c7}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <h2 style="margin:0">Mis Turnos</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="inicio.html">← Inicio</a>
+        <a class="btn" href="solicitar-turno.html">📅 Solicitar turno</a>
+        <button class="btn" id="btn-logout">⎋ Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div id="fb" class="flash" hidden></div>
+
+    <div class="card">
+      <div id="list" class="list"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    document.getElementById('btn-logout').addEventListener('click',()=>{localStorage.removeItem('token');localStorage.removeItem('my_autos');location.href='login.html'});
+
+    const CAND=['http://127.0.0.1:3000','http://localhost:3000','http://127.0.0.1:3001','http://localhost:3001'];
+    let API=null; async function base(){ if(API) return API; for(const b of CAND){ try{ const r=await fetch(b+'/health'); if(r.ok){ API=b; return b; } }catch{} } throw new Error('API no disponible'); }
+    const fbEl=document.getElementById('fb'); function fb(msg,ok=true){ fbEl.hidden=false; fbEl.className='flash '+(ok?'flash-success':'flash-error'); fbEl.textContent=(ok?'✔️ ':'❌ ')+msg; }
+
+    const list=document.getElementById('list');
+    init();
+
+    async function init(){
+      const token=localStorage.getItem('token'); if(!token){ fb('Debes iniciar sesión',false); return; }
+      try{
+        const b=await base();
+        const r=await fetch(b+'/turnos/proximos',{headers:{Authorization:'Bearer '+token}});
+        const data=await r.json();
+        if(!r.ok){ fb(data?.mensaje||'No se pudieron cargar los turnos',false); return; }
+        render(data);
+      }catch{ fb('Error de conexión',false); }
+    }
+
+    function render(turnos){
+      list.innerHTML='';
+      if(!turnos.length){ list.innerHTML='<div class="item">No tenés turnos próximos.</div>'; return; }
+      for(const t of turnos){
+        const node=document.createElement('div');
+        node.className='item';
+        node.innerHTML=`
+          <div class="row">
+            <div><label>Fecha</label><input type="date" value="${t.fecha?.slice(0,10)||''}" data-k="fecha"></div>
+            <div><label>Hora</label><input type="time" value="${t.hora?.slice(0,5)||''}" data-k="hora"></div>
+            <div><label>Servicios</label><input type="text" value="${(t.servicios||'')}" data-k="servicios" placeholder="Ej: Cambio de aceite, Frenos"></div>
+            <div><label>Motivo</label><input type="text" value="${(t.motivo||'')}" data-k="motivo"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn" data-act="save">💾 Guardar</button>
+            <button class="btn btn-danger" data-act="del">✖ Cancelar</button>
+            <span style="margin-left:auto">Vehículo: <strong>${t.marca} ${t.modelo} (${t.anio})</strong></span>
+          </div>
+        `;
+        node.querySelector('[data-act="save"]').onclick=()=>save(t.id,node);
+        node.querySelector('[data-act="del"]').onclick=()=>del(t.id,node);
+        list.appendChild(node);
+      }
+    }
+
+    async function save(id, node){
+      const token=localStorage.getItem('token'); if(!token){ fb('Sesión no válida',false); return; }
+      const payload={};
+      node.querySelectorAll('[data-k]').forEach(inp=>payload[inp.getAttribute('data-k')]=inp.value);
+      try{
+        const b=await base();
+        const r=await fetch(b+'/turnos/'+id,{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(payload)});
+        const data=await r.json();
+        if(!r.ok){ fb(data?.mensaje||'No se pudo actualizar',false); return; }
+        fb('Turno actualizado');
+      }catch{ fb('Error de conexión',false); }
+    }
+
+    async function del(id, node){
+      if(!confirm('¿Cancelar este turno?')) return;
+      const token=localStorage.getItem('token'); if(!token){ fb('Sesión no válida',false); return; }
+      try{
+        const b=await base();
+        const r=await fetch(b+'/turnos/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+        const data=await r.json();
+        if(!r.ok){ fb(data?.mensaje||'No se pudo cancelar',false); return; }
+        node.remove();
+        fb('Turno cancelado');
+      }catch{ fb('Error de conexión',false); }
+    }
+  </script>
+</body>
+</html>

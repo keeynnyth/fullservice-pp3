@@ -105,6 +105,17 @@ header nav .menu-icon {
   background-color: #0056b3;
 }
 
+#btn-panel {
+  background-color: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+#btn-panel:hover { background-color: #2a4fd4; }
+
 .container {
     width: 80%; /* Establece un ancho del 50% del contenedor padre */
     margin: 0 auto; 

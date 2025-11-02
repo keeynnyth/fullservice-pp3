@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,55 +6,32 @@
   <title>Iniciar Sesión</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="./assets/css/login.css" />
-
-
-
-
+  <style>
+    /* feedback minimal por si tu CSS no lo incluye */
+    .flash { margin-top:12px; padding:12px 14px; border-radius:8px; font-weight:600; }
+    .flash-success { background:#e8f8ef; color:#0f5132; border:1px solid #badbcc; }
+    .flash-error   { background:#fdecea; color:#611a15; border:1px solid #f5c2c7; }
+  </style>
 </head>
 <body>
 
 <div class="form-container">
   <h2>Iniciar Sesión</h2>
-  <form id="form-login">
-    <label>Email</label>
+
+  <form id="form-login" autocomplete="on">
+    <label for="email">Email</label>
     <input type="email" id="email" required />
-    <label>Contraseña</label>
+
+    <label for="password">Contraseña</label>
     <input type="password" id="password" required />
-    <button type="submit">Ingresar</button>
-    <p id="mensaje"></p>
+
+    <button type="submit" id="btn-login">Ingresar</button>
+    <p id="login-feedback" class="flash" hidden></p>
   </form>
 </div>
 
-<script>
-  document.getElementById("form-login").addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    try {
-      const res = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      console.log("🔍 Data recibida del backend:", data);
-
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("nombre", data.nombre); // <-- AQUÍ ESTABA FALTANDO
-
-        window.location.href = "inicio.html";
-      } else {
-        document.getElementById("mensaje").innerText = data.mensaje;
-      }
-    } catch (err) {
-      document.getElementById("mensaje").innerText = "Error en la solicitud";
-    }
-  });
-</script>
+<!-- Usa SOLO este script, no mezcles con inline duplicado -->
+<script src="./assets/js/login.js" type="module"></script>
 
 </body>
 </html>
